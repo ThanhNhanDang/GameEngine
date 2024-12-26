@@ -1,22 +1,42 @@
+#pragma once
+
+#include"pch.h"
+#include"Window/WindowPlatform.h"
+#include"Core/Event/EventDispatcher.h"
+
 namespace VIEngine {
-	struct ApplicationConfiguraion
-	{
+	struct VI_API ApplicationConfiguration {
 		int Width, Height;
 		const char* Title;
+		EWindowPlatformSpec WindowSpec;
 	};
 
-
-	class Application {
+	class VI_API Application {
 	public:
 		virtual ~Application() = default;
-		virtual bool Init() { return true; }
+		bool Init();
+		virtual void OnInitClient() = 0;
 		void Run();
-		virtual void Shutdown() {}
+		virtual void OnShutdownClient() = 0;
+		void Shutdown();
 	protected:
 		Application() = default;
-		Application(const ApplicationConfiguraion&);
+		Application(const ApplicationConfiguration&);
 	private:
-		ApplicationConfiguraion mConfig;
+		bool OnWindowResizedEvent(const WindowResizedEvent&);
+		bool OnKeyPressedEvent(const KeyPressedEvent&);
+		bool OnKeyHeldEvent(const KeyHeldEvent&);
+		bool OnKeyReleasedEvent(const KeyReleasedEvent&);
+		bool OnMouseMovedEvent(const MouseMovedEvent&);
+		bool OnMouseScrolledEvent(const MouseScrolledEvent&);
+		bool OnMouseButtonPressedEvent(const MouseButtonPressedEvent&);
+		bool OnMouseButtonHeldEvent(const MouseButtonHeldEvent&);
+		bool OnMouseButtonReleasedEvent(const MouseButtonReleasedEvent&);
+	private:
+		ApplicationConfiguration mConfig;
+		Unique<NativeWindow> mNativeWindow;
+		EventDispatcher mEventDispatcher;
+		class InputState* mInputState;
 	};
 
 	extern Application* CreateApplication();

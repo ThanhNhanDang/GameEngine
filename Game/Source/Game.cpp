@@ -1,28 +1,29 @@
 #include<VIEngine/Core/Entry.h>
-#include<iostream>
+#include<VIEngine/Window/Window.h>
 #include <Core/Logger/Logger.h>
 
 class Game : public VIEngine::Application {
 public:
-	Game(const VIEngine::ApplicationConfiguraion& config) : VIEngine::Application(config) {
+	Game(const VIEngine::ApplicationConfiguration& config) : VIEngine::Application(config) {
 	}
 
-	virtual bool Init() override {
+	virtual void OnInitClient() override {
 		LOG_INFO("Game is init");
-		return true;
 	}
 
-	virtual void Shutdown() override {
+	virtual void OnShutdownClient() override {
 		LOG_INFO("Game is shutdown");
 	}
 };
 
 
 VIEngine::Application* VIEngine::CreateApplication() {
-	VIEngine::ApplicationConfiguraion appConfig;
+	VIEngine::ApplicationConfiguration appConfig;
 	appConfig.Width = 800;
 	appConfig.Height = 600;
 	appConfig.Title = "VIEngine Alpha ver";
+	appConfig.WindowSpec = VIEngine::EWindowPlatformSpec::GLFW;
+
 
 	return new Game(appConfig);
 }
