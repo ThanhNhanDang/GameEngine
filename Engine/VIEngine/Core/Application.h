@@ -3,12 +3,15 @@
 #include"pch.h"
 #include"Window/WindowPlatform.h"
 #include"Core/Event/EventDispatcher.h"
+#include"Core/Layer/LayerStack.h"
+#include"Core/Time/Time.h"
 
 namespace VIEngine {
 	struct VI_API ApplicationConfiguration {
 		int Width, Height;
 		const char* Title;
-		EWindowPlatformSpec WindowSpec;
+		EWindowPlatformSpec WindowSpec;	
+		uint16_t MaxFPS;
 	};
 
 	class VI_API Application {
@@ -22,6 +25,12 @@ namespace VIEngine {
 	protected:
 		Application() = default;
 		Application(const ApplicationConfiguration&);
+
+		void PushLayer(Layer*);
+		void PushOverlayLayer(Layer*);
+		void PopLayer(Layer*);
+		void PopOverlayLayer(Layer*);
+
 	private:
 		bool OnWindowResizedEvent(const WindowResizedEvent&);
 		bool OnKeyPressedEvent(const KeyPressedEvent&);
@@ -35,8 +44,11 @@ namespace VIEngine {
 	private:
 		ApplicationConfiguration mConfig;
 		Unique<NativeWindow> mNativeWindow;
+		Unique<LayerStack> mLayerStack;
 		EventDispatcher mEventDispatcher;
 		class InputState* mInputState;
+		Time mTime;
+		bool mIsRunning;
 	};
 
 	extern Application* CreateApplication();
